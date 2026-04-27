@@ -1,0 +1,95 @@
+Create a modern, responsive personal portfolio website for a Computer Science student.
+
+Tech stack:
+- React (Vite)
+- Tailwind CSS
+- Clean component-based structure
+
+Design requirements:
+- Minimal, professional UI (white/black theme with one accent color like blue or purple)
+- Smooth animations (fade-in, hover effects)
+- Fully responsive (mobile + desktop)
+- Clean typography (use Google Fonts like Inter or Poppins)
+
+Pages / Sections required:
+
+1. Hero Section:
+- Name: Aditya D Agnihotri 
+- Title: Software Developer | Java • DSA • AI Projects
+- Tagline: "I build scalable solutions and AI-powered applications that solve real-world problems."
+- Buttons: View Projects, Download Resume, Contact
+- Add subtle animation or typing effect
+
+2. About Section:
+- Short paragraph:
+"I’m a Computer Science student focused on becoming a high-impact Software Developer. I specialize in Java, Data Structures & Algorithms, and building real-world projects including AI-powered systems. I’ve worked on innovative solutions and reached the Top 8 in a competitive hackathon. Currently, I’m strengthening DSA, building scalable projects, and preparing for top product-based companies."
+
+3. Skills Section:
+Display in grid format with icons:
+- Languages: Java, Python, C, Javascript
+- Core: DSA, OOP, DBMS, OS
+- Tools: Git, GitHub, VS Code, Figma
+- Other: Basic AI/ML, Prompt Engineering
+
+4. Projects Section:
+Create 3 project cards with:
+- Title
+- Description
+- Tech stack tags
+- GitHub link button
+- Optional demo button
+
+JCET Hub– Smart Campus Management & Engagement Platform
+Tech Stack: Node.js, Express.js, PostgreSQL, WebSockets, Tailwind CSS
+GitHub
+• Designed and developed a full-stack campus platform integrating event management, attendance tracking,
+and student engagement systems.
+• Built dynamic event registration system with real-time updates and admin-controlled CRUD operations.
+• Implemented QR-based attendance system for secure and automated student check-ins.
+• Developed role-based dashboards (Admin, Faculty, Student) with real-time data synchronization.
+• Integrated activity tracking, campus points system, and resume-building features for students.
+• Ensured responsive UI/UX and scalable backend architecture for handling concurrent users.
+• Deployed live application and resolved production-level issues including preview-to-deployment inconsis
+tencies.
+• Improved campus event participation and streamlined attendance workflows through automation.
+NextStop JGI– Real-Time College Bus Tracking System
+Tech Stack: Node.js, Express.js, PostgreSQL, WebSockets, Tailwind CSS
+GitHub
+• Architected and developed a full-stack real-time bus tracking platform with Student, Driver, and Admin
+modules.
+• Designed responsive frontend workflows for structured route and stop selection.
+• Implemented WebSocket-based live GPS synchronization for dynamic location updates.
+• Integrated PostgreSQL database for persistent route, stop, and driver management.
+• Deployed and maintained live version with iterative feature enhancements
+
+5. Achievements Section:
+- Top 8 Hackathon Finalist (50+ teams)
+- Built AI-based real-world system
+- Strong DSA foundation
+
+6. Resume Section:
+- Button to download resume (placeholder link)
+
+7. Contact Section:
+- Email - adityadagnihotri7@gmail.com
+- GitHub- https://github.com/Adityaagnihotri7
+- LinkedIn  - www.linkedin.com/in/aditya-d-8866322bb
+- Simple contact number - 8217785285
+
+8. Footer:
+- Clean footer with name and social links
+
+Other requirements:
+- Use reusable components
+- Add hover effects on cards and buttons
+- Add section spacing and smooth scroll navigation
+- Use Tailwind for styling (no inline CSS)
+- Organize files into components folder
+
+Bonus:
+- Add dark mode toggle
+- Add scroll progress indicator
+
+Finally:
+- Make code clean, readable, and production-ready
+- Include instructions to run locally and deploy on Vercel
