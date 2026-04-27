@@ -1,81 +1,67 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Download, Github, Linkedin, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Download, ArrowRight } from "lucide-react";
 
 export function Hero() {
   return (
-    <section
-      id="hero"
-      className="min-h-[100dvh] flex flex-col justify-center relative overflow-hidden pt-20"
-    >
-      {/* Background decoration */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10 pointer-events-none" />
-
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-primary font-mono text-sm md:text-base font-medium tracking-wider uppercase mb-4">
-              Hi, my name is
-            </h2>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-foreground mb-4">
-              Aditya D Agnihotri.
+    <section id="home" className="min-h-[90vh] flex flex-col justify-center pt-20 md:pt-0">
+      <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20">
+        <motion.div 
+          className="flex-1 space-y-8"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-medium">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            Available for new opportunities
+          </div>
+          
+          <div className="space-y-4">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+              Hi, I'm <br />
+              <span className="text-gradient">Aditya D Agnihotri</span>
             </h1>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight text-muted-foreground mb-6">
+            <p className="text-xl md:text-2xl text-muted-foreground font-medium">
               Software Developer | Java • DSA • AI Projects
-            </h2>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed">
-              I build scalable solutions and AI-powered applications that solve real-world problems.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-wrap items-center gap-4"
-          >
-            <Button size="lg" asChild className="font-medium group">
-              <a href="#projects">
-                View Projects
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </a>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="font-medium group">
-              <a href="#resume">
-                <Download className="mr-2 h-4 w-4 transition-transform group-hover:-translate-y-1" />
-                Download Resume
-              </a>
-            </Button>
-            <Button size="lg" variant="ghost" asChild className="font-medium">
-              <a href="#contact">Contact</a>
-            </Button>
-          </motion.div>
-        </div>
+          <p className="text-lg text-muted-foreground/80 max-w-xl leading-relaxed">
+            I build scalable solutions and AI-powered applications that solve real-world problems.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4 pt-4">
+            <a href="#projects" className="group relative px-8 py-4 rounded-xl font-medium text-white overflow-hidden shadow-[0_0_40px_rgba(124,58,237,0.3)] transition-shadow hover:shadow-[0_0_60px_rgba(124,58,237,0.5)]">
+              <div className="absolute inset-0 bg-gradient-primary" />
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <span className="relative flex items-center gap-2">
+                View My Work
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </a>
+            
+            <a href="/resume.pdf" target="_blank" className="px-8 py-4 rounded-xl font-medium glass border border-white/10 hover:bg-white/10 transition-colors flex items-center gap-2">
+              <Download className="w-5 h-5" />
+              Download CV
+            </a>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          className="relative w-64 h-64 md:w-96 md:h-96"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+        >
+          <div className="absolute inset-0 rounded-full border-2 border-primary/30 border-dashed animate-[spin_10s_linear_infinite]" />
+          <div className="absolute inset-4 rounded-full border-2 border-accent/40 border-dotted animate-[spin_15s_linear_infinite_reverse]" />
+          
+          <div className="absolute inset-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-xl border border-white/10 flex items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.3)]">
+            <div className="w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)] flex items-center justify-center">
+              <span className="text-8xl font-bold text-gradient opacity-80">A</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

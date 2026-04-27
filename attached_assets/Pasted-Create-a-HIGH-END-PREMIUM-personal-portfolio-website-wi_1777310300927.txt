@@ -1,0 +1,229 @@
+Create a HIGH-END, PREMIUM personal portfolio website with EXACT UI/UX quality similar to top-tier developer portfolios (dark neon glassmorphism style).
+
+Tech Stack:
+- React (Vite)
+- Tailwind CSS
+- Framer Motion (for smooth animations)
+- Lucide React Icons
+- Use clean component-based architecture
+
+Design System (VERY IMPORTANT — FOLLOW STRICTLY):
+
+Theme:
+- Dark theme base: #0a0a0f or #0b0f1a
+- Accent gradient: purple (#7c3aed) → blue (#06b6d4)
+- Text: white, gray-400 for secondary
+- Use soft glow + neon lighting effects
+
+UI Style:
+- Glassmorphism cards:
+  background: rgba(255,255,255,0.05)
+  backdrop-blur
+  border: 1px solid rgba(255,255,255,0.1)
+- Gradient borders + subtle inner glow
+- Soft shadows, no harsh edges
+- Rounded corners (xl/2xl)
+- Hover animations (scale 1.03 + glow increase)
+
+Layout:
+- LEFT SIDEBAR (fixed, full height)
+- MAIN CONTENT (scrollable right side)
+- Max width aligned like premium dashboards
+- Clean spacing (padding 24–40px)
+
+-----------------------------------
+
+SIDEBAR:
+- Logo: CodeFolio (top-left)
+- Menu items:
+  Home, About, Skills, Projects, Experience, Contact
+- Icons (Lucide)
+- Active item highlighted with glowing background
+- Bottom:
+  social icons (GitHub, LinkedIn, Twitter)
+  dark mode toggle
+
+-----------------------------------
+
+HERO SECTION (MOST IMPORTANT):
+
+Left side:
+- Small intro text: “Hi, my name is”
+- Name: Aditya D Agnihotri (VERY LARGE, bold)
+- Gradient highlight on name (purple-blue gradient text)
+- Title:
+  Software Developer | Java • DSA • AI Projects
+- Description:
+  "I build scalable solutions and AI-powered applications that solve real-world problems."
+
+Buttons:
+- Primary: View My Work (gradient button)
+- Secondary: Download CV (outlined button with icon)
+
+Extra Info Row:
+- Location: India
+- Experience: 2+ Years (fake but styled)
+- Availability: Open to Work (green dot indicator)
+
+Right side:
+- Profile image inside glowing circular gradient ring
+- Ring animation (subtle pulse or rotate glow)
+- Floating badge:
+  “Available for new opportunities 🚀”
+
+-----------------------------------
+
+ABOUT SECTION:
+
+- Glass card container
+- Left:
+  About text (given content)
+  button: "More About Me"
+
+- Right:
+  Stats cards (4 items):
+  - 20+ Projects
+  - 2+ Years Experience
+  - 15+ Clients
+  - 5★ Rating
+
+Each stat:
+- icon
+- number large
+- label small
+
+-----------------------------------
+
+SKILLS SECTION:
+
+- Title: Skills & Technologies
+- Categorized pills:
+
+Frontend:
+React, Next.js, JavaScript, TypeScript, HTML, CSS, Tailwind
+
+Backend:
+Node.js, Express, MongoDB, MySQL, REST API
+
+Tools:
+Git, Docker, AWS, Postman, VS Code, Figma
+
+Style:
+- Rounded pills
+- hover glow
+- subtle background highlight
+
+Right side:
+- Code illustration card (fake UI with gradient lines)
+
+-----------------------------------
+
+PROJECT SECTION:
+
+- Title: Featured Projects
+- 3 cards layout
+
+Each card:
+- Icon badge (top-left)
+- Title
+- Short description
+- Tech stack tags
+- External link icon
+
+Projects:
+1. JCET Hub
+2. NextStop JGI
+3. AI Complaint Resolver
+
+Card style:
+- glassmorphism
+- hover lift + glow
+- border highlight on hover
+
+-----------------------------------
+
+EXPERIENCE SECTION:
+
+- Timeline style (vertical line + dots)
+- Role:
+  Full Stack Developer
+- Company:
+  TechSolutions Inc.
+- Duration:
+  Jan 2023 – Present
+- Description text
+
+-----------------------------------
+
+CONTACT SECTION:
+
+Left:
+- Text:
+  “I’m open to opportunities…”
+- Email, Phone, Location
+
+Right:
+- Form UI:
+  Name
+  Email
+  Message
+  Button: Send Message (gradient)
+
+-----------------------------------
+
+FOOTER:
+- Minimal
+- © 2024 Aditya D Agnihotri
+- Back-to-top button (floating circle)
+
+-----------------------------------
+
+ANIMATIONS (IMPORTANT):
+
+- Use Framer Motion:
+  - fade-in on scroll
+  - stagger children animations
+  - hover scale effects
+- Profile ring glow animation
+- Button hover glow expand
+- Smooth scroll navigation
+
+-----------------------------------
+
+BONUS FEATURES:
+
+- Dark mode toggle (even if default is dark)
+- Scroll progress indicator (top thin bar)
+- Section reveal animations
+- Cursor glow effect (optional)
+
+-----------------------------------
+
+CODE QUALITY:
+
+- Reusable components
+- Clean folder structure:
+  /components
+  /sections
+  /assets
+- No inline CSS (Tailwind only)
+- Production-ready clean code
+
+-----------------------------------
+
+DELIVERABLE:
+
+- Full working React project
+- All components implemented
+- Ready to run with:
+  npm install
+  npm run dev
+
+-----------------------------------
+
+GOAL:
+
+The UI should look PREMIUM, MODERN, and visually identical in feel to high-end developer portfolios with neon-glow dark theme.
+
+Avoid basic or template-like design.
+Focus on polish, spacing, lighting, and micro-interactions.
