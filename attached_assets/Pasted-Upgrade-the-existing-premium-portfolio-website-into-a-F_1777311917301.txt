@@ -1,0 +1,112 @@
+Upgrade the existing premium portfolio website into a FULLY FUNCTIONAL, DYNAMIC, PRODUCTION-READY application.
+
+Tech Stack:
+- Frontend: React (Vite) + Tailwind + Framer Motion
+- Backend: Node.js + Express
+- Email Service: Nodemailer OR EmailJS (preferred for simplicity)
+- Deployment ready (Vercel + backend API)
+
+-------------------------------------
+
+CRITICAL REQUIREMENTS:
+
+1. REAL-TIME CONTACT FORM (MANDATORY)
+- Form must send message directly to:
+  adityadagnihotri7@gmail.com
+- Fields: Name, Email, Message
+- Validate inputs
+- Show success + error toast
+- Must work instantly (no fake UI)
+
+OPTION 1 (Preferred):
+Use EmailJS (no backend needed)
+
+OPTION 2:
+Create Express backend with Nodemailer SMTP
+
+-------------------------------------
+
+2. PROJECTS SECTION (REAL DATA)
+
+Fetch or statically include REAL project data:
+
+Project 1:
+Title: JCET Hub – Smart Campus Management & Engagement Platform
+GitHub: https://github.com/AnmolMathad15/JCET_HUB
+Description:
+A full-stack campus platform integrating event management, QR-based attendance, and real-time engagement using WebSockets. Features role-based dashboards (Admin, Faculty, Student), activity tracking, and resume-building tools.
+
+Tech:
+Node.js, Express.js, PostgreSQL, WebSockets, Tailwind CSS
+
+-------------------------------------
+
+Project 2:
+Title: NextStop JGI – Real-Time College Bus Tracking System
+GitHub: https://github.com/AnmolMathad15/Nextstop--JGI
+Description:
+A real-time GPS-based bus tracking system with Student, Driver, and Admin modules. Uses WebSockets for live updates and PostgreSQL for route and data management.
+
+Tech:
+Node.js, Express.js, PostgreSQL, WebSockets
+
+-------------------------------------
+
+Project 3:
+Title: AI Complaint Resolver
+GitHub: https://github.com/AnmolMathad15/AICustomerComplaintResolutionAgent-ResolveAI-Hackoclock
+Description:
+An AI-powered complaint resolution system that analyzes user queries and generates intelligent responses using NLP and automation workflows.
+
+Tech:
+Python, AI/ML, NLP, APIs
+
+-------------------------------------
+
+Project 4:
+Title: TrustChain AI
+GitHub: https://github.com/AnmolMathad15/TrustChain
+Description:
+A blockchain + AI-powered system designed to ensure trust, transparency, and secure data handling in digital ecosystems.
+
+Tech:
+Blockchain, AI, Web Tech
+
+-------------------------------------
+
+3. UI IMPROVEMENTS (KEEP PREMIUM LOOK)
+
+- Improve spacing consistency
+- Add better glow effects
+- Add gradient borders
+- Improve typography hierarchy
+- Add hover micro-interactions
+- Add loading animations
+
+-------------------------------------
+
+4. ADVANCED FEATURES
+
+- Scroll progress bar (top)
+- Smooth scroll navigation
+- Section reveal animations (Framer Motion)
+- Cursor glow effect (optional)
+- Dark mode toggle (working)
+
+-------------------------------------
+
+5. CODE QUALITY
+
+- Reusable components
+- Clean folder structure
+- No inline CSS
+- Production-ready
+
+-------------------------------------
+
+6. FINAL OUTPUT
+
+- Fully working frontend
+- Working contact form (real email sending)
+- Proper project cards with GitHub links
+- Ready to deploy
