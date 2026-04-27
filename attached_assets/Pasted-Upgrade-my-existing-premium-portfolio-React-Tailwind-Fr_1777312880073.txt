@@ -1,0 +1,302 @@
+Upgrade my existing premium portfolio (React + Tailwind + Framer Motion) into a FULL-STACK SaaS PRODUCT called "CodeFolio".
+
+This is NOT a static portfolio anymore.
+
+It must become a dynamic platform where multiple users can create and publish their own developer portfolios using templates.
+
+--------------------------------------
+
+TECH STACK (STRICT):
+
+Frontend:
+- React (Vite)
+- Tailwind CSS
+- Framer Motion
+- React Router DOM
+- React Hook Form
+- Axios
+
+Backend:
+- Node.js + Express.js
+
+Database:
+- MongoDB (Mongoose)
+
+Other:
+- JWT Authentication
+- React Helmet (SEO)
+- Nodemailer (email service)
+
+--------------------------------------
+
+CORE FEATURES (MUST IMPLEMENT ALL):
+
+======================================
+1. AUTHENTICATION SYSTEM
+======================================
+
+- Signup / Login system
+- JWT-based authentication
+- Store user securely in MongoDB
+- Fields:
+  name, email, password, username (unique), templateId
+
+--------------------------------------
+
+======================================
+2. CMS DASHBOARD (MAIN FEATURE)
+======================================
+
+Create a protected dashboard:
+
+Route:
+ /dashboard
+
+User can:
+- Add/Edit/Delete Projects
+- Add/Edit Skills
+- Update Profile
+
+Use React Hook Form
+
+Data structure:
+
+User:
+{
+  name,
+  username,
+  bio,
+  email,
+  socialLinks,
+  resumeUrl,
+  templateId
+}
+
+Project:
+{
+  title,
+  description,
+  techStack: [array],
+  githubLink,
+  liveLink,
+  image
+}
+
+Skills:
+{
+  category: "Frontend / Backend / Tools",
+  items: [array]
+}
+
+--------------------------------------
+
+======================================
+3. LIVE PREVIEW (BONUS BUT IMPORTANT)
+======================================
+
+Split screen:
+
+LEFT → form  
+RIGHT → live portfolio preview updating in real time
+
+--------------------------------------
+
+======================================
+4. TEMPLATE ENGINE (CORE ENGINEERING)
+======================================
+
+Create at least 2 templates:
+
+1. Neon Dark (your current UI)
+2. Minimal Light
+
+Implementation:
+
+const templateMap = {
+  neon: NeonLayout,
+  minimal: MinimalLayout
+};
+
+const Layout = templateMap[user.templateId] || NeonLayout;
+
+return <Layout data={userData} />
+
+--------------------------------------
+
+======================================
+5. PUBLIC PORTFOLIO ROUTE
+======================================
+
+Dynamic routing:
+
+/:username
+
+Example:
+codefolio.com/aditya
+
+Backend:
+GET /api/user/:username
+
+Fetch user + projects + skills
+
+Render selected template dynamically
+
+--------------------------------------
+
+======================================
+6. PROJECTS (REAL DATA)
+======================================
+
+Preload or allow adding these projects:
+
+1. JCET Hub
+https://github.com/AnmolMathad15/JCET_HUB
+
+Full-stack campus management platform with QR attendance, WebSockets, role-based dashboards.
+
+Tech:
+Node.js, Express, PostgreSQL, WebSockets, Tailwind
+
+--------------------------------------
+
+2. NextStop JGI
+https://github.com/AnmolMathad15/Nextstop--JGI
+
+Real-time GPS bus tracking system with WebSockets and PostgreSQL.
+
+--------------------------------------
+
+3. AI Complaint Resolver
+https://github.com/AnmolMathad15/AICustomerComplaintResolutionAgent-ResolveAI-Hackoclock
+
+AI-powered complaint analysis and response automation system.
+
+--------------------------------------
+
+4. TrustChain AI
+https://github.com/AnmolMathad15/TrustChain
+
+Blockchain + AI system for secure and transparent digital interactions.
+
+--------------------------------------
+
+======================================
+7. CONTACT FORM (REAL EMAIL)
+======================================
+
+- Must send email to user
+- Use Nodemailer (backend)
+
+POST /api/contact
+
+Fields:
+name, email, message
+
+Send mail securely without exposing email
+
+--------------------------------------
+
+======================================
+8. SEO OPTIMIZATION
+======================================
+
+Use React Helmet:
+
+- Dynamic title = user name
+- Meta description = user bio
+
+--------------------------------------
+
+======================================
+9. PREMIUM FEATURES (SIMULATED)
+======================================
+
+- Add "Pro" badge if user.isPro = true
+- Add placeholder for custom domain feature
+
+--------------------------------------
+
+======================================
+10. UI REQUIREMENTS (KEEP PREMIUM)
+======================================
+
+- Keep current neon glassmorphism UI
+- Improve spacing, glow, shadows
+- Smooth animations (Framer Motion)
+- Responsive design
+- Sidebar navigation
+- Scroll progress bar
+- Dark mode toggle
+
+--------------------------------------
+
+======================================
+11. FOLDER STRUCTURE
+======================================
+
+frontend/
+  components/
+  pages/
+  layouts/
+  dashboard/
+  services/
+
+backend/
+  models/
+  routes/
+  controllers/
+  middleware/
+
+--------------------------------------
+
+======================================
+12. API ROUTES
+======================================
+
+Auth:
+POST /api/auth/register
+POST /api/auth/login
+
+User:
+GET /api/user/:username
+PUT /api/user/update
+
+Projects:
+POST /api/projects
+GET /api/projects/:userId
+DELETE /api/projects/:id
+
+Contact:
+POST /api/contact
+
+--------------------------------------
+
+======================================
+13. DEPLOYMENT
+======================================
+
+Frontend → Vercel  
+Backend → Render / Railway  
+MongoDB → Atlas  
+
+--------------------------------------
+
+======================================
+FINAL GOAL:
+======================================
+
+Build a mini SaaS platform like Wix/Squarespace for developers.
+
+Users should:
+- Sign up
+- Fill data
+- Choose template
+- Get personal portfolio link
+
+--------------------------------------
+
+IMPORTANT:
+- Code must be clean and production-ready
+- Use reusable components
+- Avoid hardcoding data
+- Ensure everything is dynamic
