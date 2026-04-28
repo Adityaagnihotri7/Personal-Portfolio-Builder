@@ -1,70 +1,127 @@
-# Workspace
+# CodeFolio
 
-## Overview
-
-pnpm workspace monorepo using TypeScript. Hosts the **CodeFolio** SaaS — a multi-user developer-portfolio builder where any user can sign up, fill in their data, pick a template, and publish a portfolio at `/:username`.
+A multi-tenant developer-portfolio CMS. Developers sign up with Clerk, fill in
+their profile / projects / skills via a dashboard with live preview, choose a
+template (Neon Dark or Minimal Light), and get a public portfolio at
+`/<username>`.
 
 ## Stack
 
-- **Monorepo tool**: pnpm workspaces
-- **Node.js version**: 24
-- **Package manager**: pnpm
-- **TypeScript version**: 5.9
-- **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec) — used by some artifacts
-- **Build**: esbuild (CJS bundle)
-- **Frontend (portfolio artifact)**: React + Vite + Tailwind v4 + wouter + framer-motion + next-themes
-- **Auth**: JWT (HS256) stored in `localStorage` as `codefolio_token`
-- **Email**: Nodemailer via Gmail SMTP (needs `GMAIL_USER` + `GMAIL_APP_PASSWORD` secrets)
+- **Monorepo:** pnpm workspace
+- **Frontend:** React + Vite + Tailwind + shadcn/ui + Framer Motion (artifact: `portfolio`)
+- **Backend:** Express + Clerk (`@clerk/express`) + Drizzle ORM (artifact: `api-server`)
+- **Database:** Replit Postgres (Drizzle migrations via `pnpm --filter @workspace/db push`)
+- **Auth:** Clerk (whitelabel via `@clerk/react` on the frontend, JWT verified by `clerkMiddleware` on the backend, session cookies proxied for `/clerk/*`)
+- **Routing:** Wouter on the frontend; routes:
+  - `/` — Landing page with templates + showcase
+  - `/sign-in/*?`, `/sign-up/*?` — Clerk hosted-style flows
+  - `/onboard` — claim a username after first sign-in
+  - `/dashboard/:tab?` — Profile / Projects / Skills / Template tabs
+  - `/:username` — public portfolio (last route, falls back to 404)
+- **API contract:** OpenAPI 3 spec at `lib/api-spec/openapi.yaml`. Runs through orval to produce:
+  - `lib/api-zod` (zod schemas for backend validation)
+  - `lib/api-client-react` (typed react-query hooks for the frontend)
 
-## Artifacts
+## Repo layout
 
-- `artifacts/api-server` (`/api`) — Express JSON API. Routes:
-  - `POST /api/auth/register | login`, `GET /api/auth/me`
-  - `GET /api/user/:username` (public)
-  - `PUT /api/user/update` (auth)
-  - `GET|POST /api/projects`, `PUT|DELETE /api/projects/:id` (auth)
-  - `GET|POST /api/skills`, `PUT|DELETE /api/skills/:id` (auth)
-  - `POST /api/contact` — looks up `username`, emails that user via Gmail SMTP
-- `artifacts/portfolio` (`/`) — React SPA. Routes (wouter):
-  - `/` Landing (CodeFolio marketing)
-  - `/login`, `/signup`
-  - `/dashboard` (auth-gated CMS with live `<iframe>` preview, tabs: profile/projects/skills/template)
-  - `/:username` Public portfolio — picks a template based on `user.templateId`
-- `artifacts/mockup-sandbox` — design preview server (unused by SaaS)
+```
+artifacts/
+  api-server/          Express backend
+    src/
+      app.ts           Express app + Clerk proxy + middleware
+      index.ts         Boots HTTP server
+      seed.ts          Seeds demo profile (aditya)
+      routes/          auth, me, projects, skills, templates, contact, users
+      middlewares/     requireAuth (Clerk-aware)
+      lib/             users helpers, templates list
+  portfolio/           React + Vite SPA
+    src/
+      App.tsx          ClerkProvider + Wouter router
+      pages/           Landing, Onboard, Dashboard, Portfolio, not-found
+      templates/       NeonTemplate, MinimalTemplate, index registry
+      lib/             api (re-exports orval hooks), portfolioTypes,
+                       queryClient, clerkAppearance
+      components/ui    shadcn/ui primitives
+  mockup-sandbox/      (untouched scaffold)
 
-## Database
+lib/
+  api-spec/            openapi.yaml (source of truth)
+  api-zod/             generated zod schemas
+  api-client-react/    generated react-query hooks
+  db/                  drizzle schema (users, projects, skills, contactMessages)
+```
 
-`lib/db/src/schema/` — Drizzle tables:
-- `users` (uuid pk, email unique, username unique, passwordHash, name, bio, role, location, avatarUrl, resumeUrl, templateId, socialLinks jsonb, isPro)
-- `projects` (uuid pk, userId fk → users.id cascade, title, subtitle, description, techStack text[], githubLink, liveLink, image, sortOrder)
-- `skills` (uuid pk, userId fk → users.id cascade, category, items text[], sortOrder)
+## Database schema
 
-Seed: `scripts/seed.mjs` (run with `pnpm exec tsx ./seed.mjs` from `scripts/`) creates Aditya as the example user (`username=aditya`, password `changeme123`, `templateId=neon`, `isPro=true`, 4 projects, 5 skill groups).
+- `users` — clerkUserId (unique), username (unique), name, email, bio, headline,
+  location, avatarUrl, resumeUrl, templateId, socialLinks (jsonb), isPro,
+  customDomain, timestamps.
+- `projects` — userId FK, title, description, techStack[], githubLink,
+  liveLink, imageUrl, position.
+- `skills` — userId FK, category, items[], position.
+- `contactMessages` — recipientId FK, senderName, senderEmail, message, createdAt.
 
 ## Templates
 
-`artifacts/portfolio/src/templates/`:
-- `NeonTemplate.tsx` — dark glassmorphism, gradients, scroll progress, animated reveals
-- `MinimalTemplate.tsx` — light, clean, typographic
-- `index.ts` exports `pickTemplate(id)` and `templateOptions`
+`artifacts/portfolio/src/templates/index.ts` registers each template with id,
+name, description, preview swatch, accent color, and React component. Adding a
+new template: add the file under `src/templates`, then register it.
 
-Add a new template by creating the component, adding it to `templateMap`, and listing it in `templateOptions`.
+Currently registered:
 
-## Key Commands
+- `neon` — Neon Dark glassmorphic theme (cyan + violet)
+- `minimal` — Minimal Light editorial theme (serif accents)
 
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/api-server run dev` — run API server locally
-- `pnpm --filter @workspace/portfolio run dev` — run portfolio frontend
-- `cd scripts && pnpm exec tsx ./seed.mjs` — re-seed Aditya
+## Demo data
 
-## Secrets
+Run `pnpm --filter @workspace/api-server run seed` to (re)seed Aditya as a
+public demo profile (`/aditya`, Neon Dark template, Pro badge, 3 sample
+projects, 4 skill groups). Safe to re-run.
 
-- `JWT_SECRET` — set automatically (random 48-byte base64url) for signing auth tokens
-- `GMAIL_USER`, `GMAIL_APP_PASSWORD` — required for the contact form to actually send mail. Without them, `/api/contact` returns 503.
+## Auth flow
 
-See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+1. User signs up via `/sign-up` (Clerk hosted UI, dark themed).
+2. After sign-in, frontend calls `GET /api/me`. If `needsOnboarding=true`, user
+   is redirected to `/onboard` to claim a username.
+3. `POST /api/me/onboard` creates the row in our `users` table linked to
+   `clerkUserId` from the validated session.
+4. Subsequent dashboard requests carry the Clerk session cookie + JWT; backend
+   uses `getAuth(req)` to resolve the Clerk user and look up our row by
+   `clerk_user_id`.
+
+## Reserved usernames
+
+`sign-in`, `sign-up`, `dashboard`, `onboard`, `api`, `admin`, `404`,
+`settings`, `logout`, `login`, `signup`, `register` (enforced in
+`api-server/src/lib/users.ts`).
+
+## Workflows
+
+- `artifacts/api-server: API Server` — `pnpm --filter @workspace/api-server run dev`
+- `artifacts/portfolio: web` — `pnpm --filter @workspace/portfolio run dev`
+- `artifacts/mockup-sandbox: Component Preview Server` — unused (scaffold)
+
+## Environment / Secrets
+
+- `DATABASE_URL` — Replit Postgres
+- `CLERK_SECRET_KEY` — Clerk backend
+- `CLERK_PUBLISHABLE_KEY` — also used by backend proxy
+- `VITE_CLERK_PUBLISHABLE_KEY` — exposed to the frontend
+- `SESSION_SECRET` — legacy (not used after the Clerk migration)
+
+## Conventions
+
+- All API requests from the frontend go through generated react-query hooks
+  exported from `@/lib/api`.
+- Cache invalidation on mutation: invalidate the related `getXxxQueryKey()`
+  plus `getGetMyStatsQueryKey()` and the affected user's
+  `getGetPublicProfileQueryKey(username)`.
+- Public portfolio data is denormalized in a single `GET /api/u/:username`
+  call that returns `{ user, projects, skills }`.
+- Contact form submissions are stored in `contactMessages` only (no email is
+  sent yet — Resend integration is a planned follow-up).
+- The contact endpoint never exposes the recipient's email address.
+
+## Outstanding
+
+- Email delivery for contact form via Resend (proposed integration).

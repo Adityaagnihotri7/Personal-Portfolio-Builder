@@ -3,20 +3,24 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: CodeFolio API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: me
+  - name: users
+  - name: projects
+  - name: skills
+  - name: contact
+  - name: templates
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +28,728 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /me:
+    get:
+      operationId: getMe
+      tags: [me]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: Current user (or null if not yet onboarded)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    put:
+      operationId: updateMe
+      tags: [me]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserInput"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /me/onboard:
+    post:
+      operationId: onboardMe
+      tags: [me]
+      summary: Create user record after signup (claim username)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OnboardInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          description: Username taken
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /me/stats:
+    get:
+      operationId: getMyStats
+      tags: [me]
+      summary: Get profile completion stats for the current user
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserStats"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /usernames/{username}/availability:
+    get:
+      operationId: checkUsername
+      tags: [users]
+      summary: Check whether a username is available
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Availability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsernameAvailability"
+
+  /users/{username}:
+    get:
+      operationId: getPublicProfile
+      tags: [users]
+      summary: Public portfolio data for a user
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Public profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProfile"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /showcase:
+    get:
+      operationId: getShowcase
+      tags: [users]
+      summary: Recently published portfolios for landing page
+      responses:
+        "200":
+          description: Showcase list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShowcaseUser"
+
+  /templates:
+    get:
+      operationId: listTemplates
+      tags: [templates]
+      summary: List available portfolio templates
+      responses:
+        "200":
+          description: Templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Template"
+
+  /projects:
+    get:
+      operationId: listMyProjects
+      tags: [projects]
+      summary: List the current user's projects
+      responses:
+        "200":
+          description: Project list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /projects/{id}:
+    put:
+      operationId: updateProject
+      tags: [projects]
+      summary: Update a project
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete a project
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /skills:
+    get:
+      operationId: listMySkills
+      tags: [skills]
+      summary: List the current user's skill groups
+      responses:
+        "200":
+          description: Skill list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Skill"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      operationId: createSkill
+      tags: [skills]
+      summary: Create a skill group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSkillInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Skill"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /skills/{id}:
+    put:
+      operationId: updateSkill
+      tags: [skills]
+      summary: Update a skill group
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSkillInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Skill"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteSkill
+      tags: [skills]
+      summary: Delete a skill group
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /contact:
+    post:
+      operationId: sendContactMessage
+      tags: [contact]
+      summary: Send a contact message to a portfolio owner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactMessageInput"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactAck"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
     HealthStatus:
       type: object
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    SocialLinks:
+      type: object
+      properties:
+        github:
+          type: string
+        linkedin:
+          type: string
+        twitter:
+          type: string
+        website:
+          type: string
+        email:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        bio:
+          type: string
+        headline:
+          type: string
+        location:
+          type: string
+        avatarUrl:
+          type: string
+        resumeUrl:
+          type: string
+        templateId:
+          type: string
+        socialLinks:
+          $ref: "#/components/schemas/SocialLinks"
+        isPro:
+          type: boolean
+        customDomain:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - username
+        - name
+        - email
+        - bio
+        - headline
+        - location
+        - avatarUrl
+        - resumeUrl
+        - templateId
+        - socialLinks
+        - isPro
+        - customDomain
+        - createdAt
+        - updatedAt
+
+    MeResponse:
+      type: object
+      properties:
+        user:
+          oneOf:
+            - $ref: "#/components/schemas/User"
+            - type: "null"
+        needsOnboarding:
+          type: boolean
+      required: [user, needsOnboarding]
+
+    OnboardInput:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 30
+          pattern: "^[a-z0-9_-]+$"
+        name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+      required: [username, name, email]
+
+    UpdateUserInput:
+      type: object
+      properties:
+        name:
+          type: string
+        bio:
+          type: string
+        headline:
+          type: string
+        location:
+          type: string
+        avatarUrl:
+          type: string
+        resumeUrl:
+          type: string
+        templateId:
+          type: string
+        socialLinks:
+          $ref: "#/components/schemas/SocialLinks"
+        customDomain:
+          type: string
+        isPro:
+          type: boolean
+
+    UsernameAvailability:
+      type: object
+      properties:
+        username:
+          type: string
+        available:
+          type: boolean
+      required: [username, available]
+
+    UserStats:
+      type: object
+      properties:
+        projectsCount:
+          type: integer
+        skillsCount:
+          type: integer
+        completion:
+          type: integer
+          description: Profile completion percent (0-100)
+        publicUrl:
+          type: string
+      required: [projectsCount, skillsCount, completion, publicUrl]
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        techStack:
+          type: array
+          items:
+            type: string
+        githubLink:
+          type: string
+        liveLink:
+          type: string
+        imageUrl:
+          type: string
+        position:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - title
+        - description
+        - techStack
+        - githubLink
+        - liveLink
+        - imageUrl
+        - position
+        - createdAt
+        - updatedAt
+
+    CreateProjectInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        techStack:
+          type: array
+          items:
+            type: string
+        githubLink:
+          type: string
+        liveLink:
+          type: string
+        imageUrl:
+          type: string
+      required: [title]
+
+    UpdateProjectInput:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        techStack:
+          type: array
+          items:
+            type: string
+        githubLink:
+          type: string
+        liveLink:
+          type: string
+        imageUrl:
+          type: string
+        position:
+          type: integer
+
+    Skill:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        category:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+        position:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - category
+        - items
+        - position
+        - createdAt
+        - updatedAt
+
+    CreateSkillInput:
+      type: object
+      properties:
+        category:
+          type: string
+          minLength: 1
+        items:
+          type: array
+          items:
+            type: string
+      required: [category]
+
+    UpdateSkillInput:
+      type: object
+      properties:
+        category:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+        position:
+          type: integer
+
+    PublicProfile:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Project"
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/Skill"
+      required: [user, projects, skills]
+
+    ShowcaseUser:
+      type: object
+      properties:
+        username:
+          type: string
+        name:
+          type: string
+        headline:
+          type: string
+        templateId:
+          type: string
+        avatarUrl:
+          type: string
+        isPro:
+          type: boolean
+      required: [username, name, headline, templateId, avatarUrl, isPro]
+
+    Template:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        previewBackground:
+          type: string
+        accentColor:
+          type: string
+        isPro:
+          type: boolean
+      required: [id, name, description, previewBackground, accentColor, isPro]
+
+    ContactMessageInput:
+      type: object
+      properties:
+        username:
+          type: string
+        name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+        message:
+          type: string
+          minLength: 1
+      required: [username, name, email, message]
+
+    ContactAck:
+      type: object
+      properties:
+        accepted:
+          type: boolean
+      required: [accepted]

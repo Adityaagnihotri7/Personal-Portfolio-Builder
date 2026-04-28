@@ -1,77 +1,104 @@
-import { Router, type IRouter, type Response } from "express";
-import { asc, eq } from "drizzle-orm";
+import { Router, type IRouter } from "express";
+import { eq, desc, asc } from "drizzle-orm";
+import { db, usersTable, projectsTable, skillsTable } from "@workspace/db";
 import {
-  db,
-  usersTable,
-  projectsTable,
-  skillsTable,
-  updateUserSchema,
-  toPublicUser,
-} from "@workspace/db";
-import { requireAuth, type AuthedRequest } from "../lib/auth";
+  CheckUsernameParams,
+  CheckUsernameResponse,
+  GetPublicProfileParams,
+  GetPublicProfileResponse,
+  GetShowcaseResponse,
+} from "@workspace/api-zod";
+
+const RESERVED = new Set([
+  "sign-in",
+  "sign-up",
+  "dashboard",
+  "onboard",
+  "api",
+  "admin",
+  "404",
+  "settings",
+  "logout",
+  "login",
+  "signup",
+  "register",
+]);
 
 const router: IRouter = Router();
 
-router.get("/user/:username", async (req, res) => {
-  const username = req.params["username"]!.toLowerCase();
-  try {
-    const [user] = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.username, username))
-      .limit(1);
-    if (!user) {
-      res.status(404).json({ ok: false, error: "Portfolio not found" });
+router.get(
+  "/usernames/:username/availability",
+  async (req, res): Promise<void> => {
+    const params = CheckUsernameParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
       return;
     }
-    const [projects, skills] = await Promise.all([
-      db
-        .select()
-        .from(projectsTable)
-        .where(eq(projectsTable.userId, user.id))
-        .orderBy(asc(projectsTable.sortOrder), asc(projectsTable.createdAt)),
-      db
-        .select()
-        .from(skillsTable)
-        .where(eq(skillsTable.userId, user.id))
-        .orderBy(asc(skillsTable.sortOrder), asc(skillsTable.createdAt)),
-    ]);
+    const username = params.data.username.toLowerCase();
+    if (
+      RESERVED.has(username) ||
+      !/^[a-z0-9_-]{3,30}$/.test(username)
+    ) {
+      res.json(
+        CheckUsernameResponse.parse({ username, available: false }),
+      );
+      return;
+    }
+    const [taken] = await db
+      .select({ id: usersTable.id })
+      .from(usersTable)
+      .where(eq(usersTable.username, username));
+    res.json(
+      CheckUsernameResponse.parse({ username, available: !taken }),
+    );
+  },
+);
 
-    res.json({
-      ok: true,
-      user: toPublicUser(user, false),
-      projects,
-      skills,
-    });
-  } catch (err) {
-    req.log.error({ err }, "get user failed");
-    res.status(500).json({ ok: false, error: "Failed to load portfolio" });
-  }
-});
-
-router.put("/user/update", requireAuth, async (req: AuthedRequest, res: Response) => {
-  const parsed = updateUserSchema.safeParse(req.body);
-  if (!parsed.success) {
-    res
-      .status(400)
-      .json({ ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" });
+router.get("/users/:username", async (req, res): Promise<void> => {
+  const params = GetPublicProfileParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
     return;
   }
-  try {
-    const [user] = await db
-      .update(usersTable)
-      .set({ ...parsed.data, updatedAt: new Date() })
-      .where(eq(usersTable.id, req.user!.sub))
-      .returning();
-    if (!user) {
-      res.status(404).json({ ok: false, error: "User not found" });
-      return;
-    }
-    res.json({ ok: true, user: toPublicUser(user, true) });
-  } catch (err) {
-    req.log.error({ err }, "update user failed");
-    res.status(500).json({ ok: false, error: "Failed to update profile" });
+  const username = params.data.username.toLowerCase();
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.username, username));
+  if (!user) {
+    res.status(404).json({ error: "Profile not found" });
+    return;
   }
+  const projects = await db
+    .select()
+    .from(projectsTable)
+    .where(eq(projectsTable.userId, user.id))
+    .orderBy(asc(projectsTable.position), desc(projectsTable.createdAt));
+  const skills = await db
+    .select()
+    .from(skillsTable)
+    .where(eq(skillsTable.userId, user.id))
+    .orderBy(asc(skillsTable.position), asc(skillsTable.category));
+
+  res.json(
+    GetPublicProfileResponse.parse({ user, projects, skills }),
+  );
+});
+
+router.get("/showcase", async (_req, res): Promise<void> => {
+  const users = await db
+    .select({
+      username: usersTable.username,
+      name: usersTable.name,
+      headline: usersTable.headline,
+      templateId: usersTable.templateId,
+      avatarUrl: usersTable.avatarUrl,
+      isPro: usersTable.isPro,
+    })
+    .from(usersTable)
+    .orderBy(desc(usersTable.updatedAt))
+    .limit(12);
+  res.json(GetShowcaseResponse.parse(users));
 });
 
 export default router;

@@ -1,130 +1,278 @@
 import { Link } from "wouter";
+import { Show } from "@clerk/react";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { Sparkles, Layers, Globe, Zap, Github } from "lucide-react";
-import { GlassCard } from "@/components/ui/GlassCard";
-
-const BASE = import.meta.env.BASE_URL;
+import { ArrowRight, Code2, Layout, Sparkles, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useGetShowcase, useListTemplates } from "@/lib/api";
 
 export function Landing() {
+  const { data: showcase } = useGetShowcase();
+  const { data: templates } = useListTemplates();
+
   return (
-    <div className="min-h-screen w-full bg-background text-foreground relative overflow-hidden">
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[10%] left-[10%] w-[60%] h-[60%] rounded-full bg-primary/15 blur-[160px]" />
-        <div className="absolute top-[40%] -right-[10%] w-[50%] h-[50%] rounded-full bg-accent/15 blur-[140px]" />
+    <div className="min-h-screen bg-slate-950 text-slate-100">
+      <Helmet>
+        <title>CodeFolio — Build a stunning developer portfolio in minutes</title>
+        <meta
+          name="description"
+          content="CodeFolio lets developers ship a professional portfolio in minutes. Pick a template, fill in your projects, share a public URL — no code required."
+        />
+        <link
+          rel="canonical"
+          href={`${window.location.origin}${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}
+        />
+      </Helmet>
+
+      {/* Background glow */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-r from-cyan-500/20 via-violet-500/20 to-fuchsia-500/20 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl" />
       </div>
 
-      <header className="relative z-10 max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center font-bold text-white">
-            C
-          </div>
-          <span className="text-lg font-bold">CodeFolio</span>
-        </Link>
-        <nav className="flex items-center gap-3">
+      {/* Header */}
+      <header className="sticky top-0 z-40 border-b border-slate-800/50 bg-slate-950/70 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link
-            href="/login"
-            className="px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground"
+            href="/"
+            className="flex items-center gap-2 font-mono text-lg font-bold tracking-tight"
+            data-testid="link-home"
           >
-            Log in
+            <span className="rounded-md bg-gradient-to-br from-cyan-400 to-violet-500 px-2 py-1 text-slate-950">
+              {"</>"}
+            </span>
+            <span>CodeFolio</span>
           </Link>
-          <Link
-            href="/signup"
-            className="px-4 py-2 rounded-xl text-sm font-medium bg-gradient-primary text-white shadow-[0_0_30px_rgba(124,58,237,0.35)] hover:shadow-[0_0_50px_rgba(124,58,237,0.55)] transition-shadow"
-          >
-            Get Started
-          </Link>
-        </nav>
+          <nav className="flex items-center gap-3">
+            <a
+              href="#templates"
+              className="hidden text-sm text-slate-400 hover:text-slate-100 sm:block"
+            >
+              Templates
+            </a>
+            <a
+              href="#showcase"
+              className="hidden text-sm text-slate-400 hover:text-slate-100 sm:block"
+            >
+              Showcase
+            </a>
+            <Show when="signed-out">
+              <Link href="/sign-in">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-200 hover:bg-slate-800 hover:text-white"
+                  data-testid="button-sign-in"
+                >
+                  Sign in
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 hover:opacity-90"
+                  data-testid="button-get-started"
+                >
+                  Get started
+                </Button>
+              </Link>
+            </Show>
+            <Show when="signed-in">
+              <Link href="/dashboard">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 hover:opacity-90"
+                  data-testid="button-dashboard"
+                >
+                  Dashboard
+                </Button>
+              </Link>
+            </Show>
+          </nav>
+        </div>
       </header>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-12 md:pt-24 pb-24">
+      {/* Hero */}
+      <section className="mx-auto max-w-6xl px-6 pt-20 pb-24 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center space-y-6"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-primary/20 text-xs font-semibold text-primary">
-            <Sparkles className="w-3.5 h-3.5" /> Now in beta
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-            <span className="text-gradient">Your developer portfolio.</span>
-            <br />
-            Live in 60 seconds.
+          <Badge className="mb-6 border-cyan-400/30 bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20">
+            <Sparkles className="mr-1 h-3 w-3" /> Now with Pro templates
+          </Badge>
+          <h1 className="mx-auto max-w-3xl text-5xl font-bold tracking-tight sm:text-6xl">
+            Ship your{" "}
+            <span className="bg-gradient-to-r from-cyan-300 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              developer portfolio
+            </span>{" "}
+            in minutes.
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            CodeFolio is the SaaS for engineers who want a stunning portfolio without writing a
-            single line of CSS. Pick a template, add your projects, share your link.
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
+            CodeFolio is a hosted CMS for developers. Sign up, fill in your
+            projects and skills, pick a template — and your live portfolio is
+            ready at a beautiful URL.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <Link
-              href="/signup"
-              className="px-7 py-3.5 rounded-xl font-medium text-white bg-gradient-primary shadow-[0_0_40px_rgba(124,58,237,0.4)] hover:shadow-[0_0_60px_rgba(124,58,237,0.6)] transition-shadow"
-            >
-              Create your portfolio
-            </Link>
-            <Link
-              href="/aditya"
-              className="px-7 py-3.5 rounded-xl font-medium glass border border-white/10 hover:border-white/20 inline-flex items-center gap-2"
-            >
-              See a live example <Globe className="w-4 h-4" />
+          <div className="mt-10 flex items-center justify-center gap-4">
+            <Show when="signed-out">
+              <Link href="/sign-up">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 hover:opacity-90"
+                  data-testid="button-hero-cta"
+                >
+                  Create your portfolio <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </Show>
+            <Show when="signed-in">
+              <Link href="/dashboard">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 hover:opacity-90"
+                  data-testid="button-hero-dashboard"
+                >
+                  Go to dashboard <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </Show>
+            <Link href="/aditya">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-slate-700 bg-slate-900/50 text-slate-200 hover:bg-slate-800"
+                data-testid="button-demo"
+              >
+                See live demo
+              </Button>
             </Link>
           </div>
-          <p className="text-xs text-muted-foreground pt-2">
-            Free during beta · No credit card · Your link looks like{" "}
-            <code className="text-foreground">{`${location.host}${BASE}your-name`}</code>
-          </p>
         </motion.div>
+      </section>
 
-        <div className="grid md:grid-cols-3 gap-6 mt-24">
-          {[
-            {
-              icon: Layers,
-              title: "Multiple templates",
-              body: "Switch between Neon Dark and Minimal Light with one click. More templates coming.",
-            },
-            {
-              icon: Zap,
-              title: "Live preview",
-              body: "Edit projects, skills, and bio in a CMS dashboard with a live side-by-side preview.",
-            },
-            {
-              icon: Globe,
-              title: "Public profile URL",
-              body: "Every account gets a clean URL — codefolio.com/your-handle — ready to share.",
-            },
-          ].map((f, i) => (
-            <motion.div
-              key={f.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
+      {/* Features */}
+      <section className="mx-auto grid max-w-6xl gap-6 px-6 pb-24 sm:grid-cols-3">
+        {[
+          {
+            icon: Layout,
+            title: "Beautiful templates",
+            body: "Neon Dark glassmorphism and Minimal Light editorial — pick and switch any time.",
+          },
+          {
+            icon: Code2,
+            title: "Built for devs",
+            body: "Drop in projects with tech stacks, GitHub + live links, and grouped skills.",
+          },
+          {
+            icon: ShieldCheck,
+            title: "Safe contact form",
+            body: "Visitors can reach you without ever seeing your email.",
+          },
+        ].map(({ icon: Icon, title, body }) => (
+          <motion.div
+            key={title}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="rounded-2xl border border-slate-800/60 bg-slate-900/50 p-6 backdrop-blur"
+          >
+            <div className="mb-3 inline-flex rounded-lg bg-gradient-to-br from-cyan-400/20 to-violet-500/20 p-2">
+              <Icon className="h-5 w-5 text-cyan-300" />
+            </div>
+            <h3 className="text-lg font-semibold">{title}</h3>
+            <p className="mt-1 text-sm text-slate-400">{body}</p>
+          </motion.div>
+        ))}
+      </section>
+
+      {/* Templates */}
+      <section id="templates" className="mx-auto max-w-6xl px-6 pb-24">
+        <h2 className="text-3xl font-semibold tracking-tight">
+          Pick your style
+        </h2>
+        <p className="mt-2 text-slate-400">
+          Switch templates anytime from your dashboard.
+        </p>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2">
+          {(templates ?? []).map((t) => (
+            <div
+              key={t.id}
+              className="group overflow-hidden rounded-2xl border border-slate-800/60 bg-slate-900/40"
+              data-testid={`card-template-${t.id}`}
             >
-              <GlassCard className="h-full" hoverScale={false}>
-                <div className="p-3 rounded-xl bg-gradient-to-br from-primary/15 to-accent/15 border border-white/10 inline-flex">
-                  <f.icon className="w-5 h-5 text-primary" />
+              <div
+                className="flex h-48 items-center justify-center text-2xl font-semibold"
+                style={{ background: t.previewBackground, color: t.accentColor }}
+              >
+                {t.name}
+              </div>
+              <div className="p-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">{t.name}</h3>
+                  {t.isPro && (
+                    <Badge className="bg-amber-500/10 text-amber-300">
+                      Pro
+                    </Badge>
+                  )}
                 </div>
-                <h3 className="text-lg font-semibold mt-4">{f.title}</h3>
-                <p className="text-muted-foreground mt-2 leading-relaxed">{f.body}</p>
-              </GlassCard>
-            </motion.div>
+                <p className="mt-1 text-sm text-slate-400">{t.description}</p>
+              </div>
+            </div>
           ))}
         </div>
+      </section>
 
-        <div className="mt-24 text-center">
-          <p className="text-sm text-muted-foreground">
-            Built by developers, for developers ·{" "}
-            <a
-              href="https://github.com/AnmolMathad15"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 hover:text-foreground"
+      {/* Showcase */}
+      <section id="showcase" className="mx-auto max-w-6xl px-6 pb-24">
+        <h2 className="text-3xl font-semibold tracking-tight">
+          Recent portfolios
+        </h2>
+        <p className="mt-2 text-slate-400">Built with CodeFolio.</p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {(showcase ?? []).map((u) => (
+            <Link
+              key={u.username}
+              href={`/${u.username}`}
+              className="group rounded-2xl border border-slate-800/60 bg-slate-900/40 p-5 transition-all hover:border-cyan-400/40 hover:shadow-[0_0_24px_-6px_rgba(34,211,238,0.4)]"
+              data-testid={`card-showcase-${u.username}`}
             >
-              <Github className="w-4 h-4" /> GitHub
-            </a>
-          </p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-lg font-bold text-slate-950">
+                  {u.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="truncate font-semibold">{u.name}</p>
+                    {u.isPro && (
+                      <Badge className="bg-amber-500/10 text-amber-300">
+                        Pro
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="truncate text-sm text-slate-400">
+                    @{u.username} · {u.headline || "Developer"}
+                  </p>
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-slate-500 group-hover:text-cyan-300">
+                View portfolio →
+              </p>
+            </Link>
+          ))}
+          {(!showcase || showcase.length === 0) && (
+            <div className="col-span-full rounded-2xl border border-dashed border-slate-800 p-10 text-center text-slate-500">
+              No portfolios yet — be the first to publish.
+            </div>
+          )}
         </div>
-      </main>
+      </section>
+
+      <footer className="border-t border-slate-800/60 py-8 text-center text-sm text-slate-500">
+        Built with CodeFolio · © {new Date().getFullYear()}
+      </footer>
     </div>
   );
 }

@@ -1,84 +1,42 @@
-import { useEffect, useState } from "react";
-import { Link } from "wouter";
-import { api, ApiError } from "@/lib/api";
-import { pickTemplate } from "@/templates";
-import type { PortfolioData } from "@/lib/types";
+import { Helmet } from "react-helmet-async";
+import { Loader2 } from "lucide-react";
+import { useGetPublicProfile } from "@/lib/api";
+import { getTemplate } from "@/templates";
+import NotFound from "@/pages/not-found";
 
 export function Portfolio({ username }: { username: string }) {
-  const [data, setData] = useState<PortfolioData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, error } = useGetPublicProfile(username);
 
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    setData(null);
-    api
-      .getPublicPortfolio(username)
-      .then((res) => {
-        if (cancelled) return;
-        setData({ user: res.user, projects: res.projects, skills: res.skills });
-        document.title = `${res.user.name} · ${res.user.role}`;
-        const meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-        if (meta && res.user.bio) meta.content = res.user.bio;
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        if (err instanceof ApiError && err.status === 404) {
-          setError("not_found");
-        } else {
-          setError(err instanceof Error ? err.message : "Failed to load portfolio");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [username]);
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen w-full bg-background flex items-center justify-center">
-        <div className="flex items-center gap-3 text-muted-foreground">
-          <span className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-          Loading portfolio…
-        </div>
+      <div className="flex min-h-[100dvh] items-center justify-center bg-slate-950 text-slate-300">
+        <Loader2 className="h-6 w-6 animate-spin" />
       </div>
     );
   }
-
-  if (error === "not_found") {
-    return (
-      <div className="min-h-screen w-full bg-background text-foreground flex items-center justify-center px-6">
-        <div className="text-center space-y-4 max-w-md">
-          <h1 className="text-3xl font-bold">
-            <span className="text-gradient">@{username}</span> isn't on CodeFolio yet
-          </h1>
-          <p className="text-muted-foreground">
-            Want this handle? Sign up and grab it before someone else does.
-          </p>
-          <Link
-            href="/signup"
-            className="inline-block px-6 py-3 rounded-xl font-medium text-white bg-gradient-primary shadow-[0_0_30px_rgba(124,58,237,0.35)]"
-          >
-            Claim @{username}
-          </Link>
-        </div>
-      </div>
-    );
+  if (error || !data?.user) {
+    return <NotFound />;
   }
 
-  if (error || !data) {
-    return (
-      <div className="min-h-screen w-full bg-background text-foreground flex items-center justify-center">
-        <p className="text-muted-foreground">{error ?? "Something went wrong."}</p>
-      </div>
-    );
-  }
+  const template = getTemplate(data.user.templateId);
+  const TemplateComponent = template.Component;
+  const url = `${window.location.origin}${import.meta.env.BASE_URL.replace(/\/$/, "")}/${data.user.username}`;
 
-  const Template = pickTemplate(data.user.templateId);
-  return <Template data={data} />;
+  return (
+    <>
+      <Helmet>
+        <title>{`${data.user.name} — ${data.user.headline || "Developer Portfolio"}`}</title>
+        <meta name="description" content={data.user.bio || `${data.user.name}'s developer portfolio`} />
+        <meta property="og:title" content={`${data.user.name} — Portfolio`} />
+        <meta property="og:description" content={data.user.bio || `${data.user.name}'s developer portfolio`} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content={url} />
+        {data.user.avatarUrl && (
+          <meta property="og:image" content={data.user.avatarUrl} />
+        )}
+        <link rel="canonical" href={url} />
+      </Helmet>
+      <TemplateComponent data={data} />
+    </>
+  );
 }

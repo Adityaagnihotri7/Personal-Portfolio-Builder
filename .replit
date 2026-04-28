@@ -35,3 +35,4 @@ externalPort = 3000
 
 [userenv.shared]
 JWT_SECRET = "ZdYcWX5wnW77Nz5qCv7wfqfyNAx4yKjGCW-pK9lNC4KMKb262keW2WlkVxuvtQKp"
+VITE_CLERK_PUBLISHABLE_KEY = "pk_test_cXVpY2stZGVlci0xNy5jbGVyay5hY2NvdW50cy5kZXYk"

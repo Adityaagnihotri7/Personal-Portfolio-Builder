@@ -1,0 +1,301 @@
+Build a FULL-STACK SaaS web application called **CodeFolio**.
+
+This is NOT a simple portfolio website.
+It is a **No-Code / Low-Code CMS platform** that allows developers to create and publish their own portfolio websites using pre-designed templates.
+
+The system must be dynamic, multi-user, scalable, and production-ready.
+
+----------------------------------------
+TECH STACK (STRICT REQUIREMENTS)
+----------------------------------------
+
+Frontend:
+- React (Vite)
+- Tailwind CSS
+- React Router DOM
+- React Hook Form
+- Axios
+- Framer Motion
+- React Helmet (SEO)
+
+Backend:
+- Node.js
+- Express.js
+
+Database:
+- MongoDB (Mongoose)
+
+Authentication:
+- JWT-based authentication
+
+Email:
+- Nodemailer or SendGrid API
+
+----------------------------------------
+CORE PRODUCT REQUIREMENTS
+----------------------------------------
+
+The application must support MULTI-USER functionality.
+
+Each user should be able to:
+- Register/Login
+- Create and manage their own portfolio
+- Input raw data (bio, GitHub links, skills, etc.)
+- Select a template
+- Get a public portfolio URL: /:username
+
+----------------------------------------
+AUTHENTICATION SYSTEM
+----------------------------------------
+
+Implement:
+- User Registration
+- User Login
+- JWT Authentication
+- Protected Routes
+
+User Schema:
+{
+  name: String,
+  email: String,
+  password: String (hashed),
+  username: String (unique),
+  bio: String,
+  socialLinks: Object,
+  resumeUrl: String,
+  templateId: String,
+  isPro: Boolean
+}
+
+----------------------------------------
+CMS DASHBOARD (CORE FEATURE)
+----------------------------------------
+
+Create a protected dashboard:
+
+Route:
+→ /dashboard
+
+Features:
+- Edit Profile (name, bio, social links, resume)
+- Add/Edit/Delete Projects
+- Add/Edit/Delete Skills
+- Select Template
+
+Use React Hook Form for all forms.
+
+Project Schema:
+{
+  userId: ObjectId,
+  title: String,
+  description: String,
+  techStack: [String],
+  githubLink: String,
+  liveLink: String,
+  image: String
+}
+
+Skills Schema:
+{
+  userId: ObjectId,
+  category: String (Frontend / Backend / DevOps),
+  items: [String]
+}
+
+----------------------------------------
+LIVE PREVIEW (IMPORTANT)
+----------------------------------------
+
+Dashboard layout:
+- Left side → Form inputs
+- Right side → Real-time portfolio preview
+
+Changes in form should reflect instantly in preview.
+
+----------------------------------------
+TEMPLATE ENGINE (CORE ENGINEERING)
+----------------------------------------
+
+Create at least 2 templates:
+
+1. Neon Dark (glassmorphism UI, premium)
+2. Minimal Light (clean corporate UI)
+
+Implementation:
+
+const templateMap = {
+  neon: NeonLayout,
+  minimal: MinimalLayout
+};
+
+const Layout = templateMap[user.templateId] || NeonLayout;
+
+return <Layout data={userData} />
+
+Templates must:
+- Be reusable
+- Accept dynamic data
+- Be cleanly separated
+
+----------------------------------------
+PUBLIC ROUTING (VANITY URLs)
+----------------------------------------
+
+Dynamic route:
+→ /:username
+
+Backend API:
+GET /api/user/:username
+
+Functionality:
+- Fetch user profile, projects, and skills
+- Render selected template dynamically
+
+----------------------------------------
+SEO OPTIMIZATION
+----------------------------------------
+
+Use React Helmet:
+
+- Dynamic <title> based on user name
+- Meta description based on user bio
+
+----------------------------------------
+CONTACT FORM (REAL FUNCTIONALITY)
+----------------------------------------
+
+Each portfolio must include a working contact form.
+
+Requirements:
+- Do NOT expose user's email
+- Use backend email service
+
+API:
+POST /api/contact
+
+Fields:
+- name
+- email
+- message
+
+Use Nodemailer or SendGrid to send emails securely.
+
+----------------------------------------
+PREMIUM FEATURES (SIMULATION)
+----------------------------------------
+
+- Add "Pro" badge if user.isPro = true
+- Add custom domain field (simulate mapping logic or redirect)
+
+----------------------------------------
+UI/UX REQUIREMENTS
+----------------------------------------
+
+- Modern SaaS-level UI
+- Fully responsive
+- Sidebar navigation (dashboard)
+- Smooth animations using Framer Motion
+- Glassmorphism (for neon template)
+- Clean spacing, typography, and hierarchy
+
+----------------------------------------
+FOLDER STRUCTURE
+----------------------------------------
+
+frontend/
+  components/
+  pages/
+  layouts/
+  dashboard/
+  services/
+  hooks/
+
+backend/
+  models/
+  routes/
+  controllers/
+  middleware/
+  config/
+
+----------------------------------------
+API DESIGN
+----------------------------------------
+
+Auth:
+POST /api/auth/register
+POST /api/auth/login
+
+User:
+GET /api/user/:username
+PUT /api/user/update
+
+Projects:
+POST /api/projects
+GET /api/projects/:userId
+PUT /api/projects/:id
+DELETE /api/projects/:id
+
+Skills:
+POST /api/skills
+GET /api/skills/:userId
+
+Contact:
+POST /api/contact
+
+----------------------------------------
+DEPLOYMENT
+----------------------------------------
+
+Frontend:
+- Vercel
+
+Backend:
+- Render or Railway
+
+Database:
+- MongoDB Atlas
+
+----------------------------------------
+DELIVERABLE REQUIREMENTS
+----------------------------------------
+
+1. GitHub Repository
+- Clean separation of frontend and backend
+- CMS dashboard implemented
+- At least 2 templates working
+
+2. Live Application
+- Fully deployed
+- Functional dashboard
+- Dynamic public routes
+
+3. Demo Profiles
+- /user/demo1 (Neon template)
+- /user/demo2 (Minimal template)
+
+4. System Design Note
+- Explain routing strategy (/username)
+- Explain template engine
+- Explain database schema
+
+----------------------------------------
+FINAL GOAL
+----------------------------------------
+
+Build a scalable SaaS platform similar to:
+- Wix (simplified)
+- Squarespace (for developers)
+
+Users should:
+1. Sign up
+2. Enter their data
+3. Choose a template
+4. Instantly get a live portfolio link
+
+----------------------------------------
+
+IMPORTANT:
+- Do NOT hardcode any data
+- Ensure full dynamic rendering
+- Maintain clean architecture
+- Write production-ready code

@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Aditya D Agnihotri — Portfolio"
+title = "CodeFolio"
 version = "1.0.0"
 id = "artifacts/portfolio"
 router = "path"
