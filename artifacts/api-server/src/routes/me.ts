@@ -15,35 +15,46 @@ const router: IRouter = Router();
 
 router.get("/me", requireAuth, async (req, res): Promise<void> => {
   const clerkUserId = req.clerkUserId!;
+  console.log("[GET /api/me] clerkUserId:", clerkUserId);
+
   const user = await findUserByClerkId(clerkUserId);
   if (!user) {
+    console.log("[GET /api/me] No user found → needsOnboarding: true");
     res.json(GetMeResponse.parse({ user: null, needsOnboarding: true }));
     return;
   }
+  console.log("[GET /api/me] Found user:", user.username, "| id:", user.id);
   res.json(GetMeResponse.parse({ user, needsOnboarding: false }));
 });
 
 router.post("/me/onboard", requireAuth, async (req, res): Promise<void> => {
   const clerkUserId = req.clerkUserId!;
+  console.log("[POST /api/me/onboard] clerkUserId:", clerkUserId);
+  console.log("[POST /api/me/onboard] body:", req.body);
+
   const parsed = OnboardMeBody.safeParse(req.body);
   if (!parsed.success) {
+    console.error("[POST /api/me/onboard] Validation error:", parsed.error.message);
     res.status(400).json({ error: parsed.error.message });
     return;
   }
 
   const existing = await findUserByClerkId(clerkUserId);
   if (existing) {
+    console.log("[POST /api/me/onboard] User already exists:", existing.username);
     res.status(200).json(existing);
     return;
   }
 
   const username = parsed.data.username.toLowerCase();
+
   const [taken] = await db
     .select({ id: usersTable.id })
     .from(usersTable)
     .where(eq(usersTable.username, username));
   if (taken) {
-    res.status(409).json({ error: "Username already taken" });
+    console.warn("[POST /api/me/onboard] Username already taken:", username);
+    res.status(409).json({ error: "Username already taken. Please choose another." });
     return;
   }
 
@@ -57,6 +68,8 @@ router.post("/me/onboard", requireAuth, async (req, res): Promise<void> => {
       headline: "Developer",
     })
     .returning();
+
+  console.log("[POST /api/me/onboard] User created:", user.username, "| id:", user.id);
   res.status(201).json(user);
 });
 

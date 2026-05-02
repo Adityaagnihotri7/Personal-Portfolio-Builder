@@ -1,0 +1,165 @@
+Fix the onboarding flow in my FULL-STACK SaaS application (CodeFolio). The issue is that users get stuck on the onboarding page (/onboard) and their profile is not properly saved or linked.
+
+I want a complete, production-ready onboarding system that connects Clerk authentication with my MongoDB database and correctly redirects users.
+
+---
+
+# 🎯 GOAL
+
+Implement a robust onboarding system where:
+
+1. User signs up using Clerk
+2. App checks if user exists in MongoDB
+3. If NOT → show onboarding page
+4. User submits onboarding form
+5. Data is saved in DB
+6. User is marked as onboarded
+7. Redirect to dashboard
+8. On reload → onboarding should NOT appear again
+
+---
+
+# 🧠 REQUIREMENTS
+
+## 1. BACKEND (Node.js + Express + MongoDB)
+
+Create or fix this API:
+
+### POST /api/user/onboard
+
+* Protected using Clerk middleware
+
+* Extract Clerk userId using:
+  req.auth.userId
+
+* Save/update user in MongoDB:
+
+Fields:
+
+* clerkId
+* username
+* name
+* email (from Clerk)
+* isOnboarded = true
+
+Use:
+
+* findOneAndUpdate with upsert: true
+
+Return updated user
+
+---
+
+## 2. USER SCHEMA (Mongoose)
+
+Ensure schema includes:
+
+* clerkId (unique)
+* username (unique)
+* name
+* email
+* isOnboarded (default: false)
+
+---
+
+## 3. FRONTEND (React)
+
+### Onboarding Page (/onboard)
+
+* Form fields:
+
+  * username
+  * display name
+
+* On submit:
+
+  * Call POST /api/user/onboard
+  * Send username + name
+
+* After success:
+
+  * Redirect to /dashboard
+
+---
+
+## 4. AUTH + USER CHECK LOGIC
+
+On app load:
+
+* Get Clerk user
+* Call backend:
+
+GET /api/user/me
+
+* If user exists AND isOnboarded = true:
+  → redirect to /dashboard
+
+* If user exists BUT isOnboarded = false:
+  → redirect to /onboard
+
+* If user does NOT exist:
+  → redirect to /onboard
+
+---
+
+## 5. PREVENT INFINITE LOOP
+
+Ensure:
+
+* Onboarded users NEVER see onboarding again
+* Non-onboarded users cannot access dashboard
+
+---
+
+## 6. DEBUGGING LOGS
+
+Add logs to verify flow:
+
+Frontend:
+
+* "Submitting onboarding"
+* API response
+
+Backend:
+
+* Log req.auth.userId
+* Log saved user
+
+---
+
+## 7. ERROR HANDLING
+
+* Handle duplicate username
+* Handle missing Clerk auth
+* Return proper status codes
+
+---
+
+## 8. BONUS (OPTIONAL BUT PREFERRED)
+
+* Auto-fill email from Clerk
+* Show loading state on submit
+* Show success/error toast
+
+---
+
+# 🎯 FINAL EXPECTATION
+
+After implementation:
+
+* New user signs up → goes to onboarding
+* Submits form → data saved in DB
+* Redirects to dashboard
+* Refresh → stays on dashboard (no onboarding loop)
+
+---
+
+Generate:
+
+1. Backend route code
+2. Mongoose schema
+3. Frontend onboarding component
+4. Auth-check logic
+5. Redirect logic
+
+Ensure everything is clean, scalable, and production-ready.

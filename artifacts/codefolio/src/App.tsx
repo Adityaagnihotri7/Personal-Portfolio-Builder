@@ -1,10 +1,11 @@
 import React from "react";
 import { Switch, Route, Router as WouterRouter, useLocation, Redirect } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClerkProvider, useAuth, SignIn, SignUp, useUser } from "@clerk/clerk-react";
 import { setupAuthInterceptor } from "./lib/api";
+import { useGetMe, getGetMeQueryKey } from "@workspace/api-client-react";
 import Landing from "@/pages/Landing";
 import Onboard from "@/pages/Onboard";
 import Dashboard from "@/pages/Dashboard";
@@ -29,6 +30,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+const Spinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isSignedIn, isLoaded } = useUser();
   const [, setLocation] = useLocation();
@@ -39,15 +46,44 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     }
   }, [isLoaded, isSignedIn, setLocation]);
 
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
+  if (!isLoaded) return <Spinner />;
   if (!isSignedIn) return null;
+  return <>{children}</>;
+}
+
+function OnboardingGuard({ children }: { children: React.ReactNode }) {
+  const [, setLocation] = useLocation();
+  const { data: meData, isLoading, isError } = useGetMe();
+
+  React.useEffect(() => {
+    if (!isLoading && !isError && meData?.needsOnboarding) {
+      console.log("[OnboardingGuard] User needs onboarding → redirecting to /onboard");
+      setLocation("/onboard");
+    }
+  }, [isLoading, isError, meData, setLocation]);
+
+  if (isLoading) return <Spinner />;
+
+  if (meData?.needsOnboarding) return null;
+
+  return <>{children}</>;
+}
+
+function OnboardRoute({ children }: { children: React.ReactNode }) {
+  const [, setLocation] = useLocation();
+  const { data: meData, isLoading } = useGetMe();
+
+  React.useEffect(() => {
+    if (!isLoading && meData?.user && !meData?.needsOnboarding) {
+      console.log("[OnboardRoute] User already onboarded → redirecting to /dashboard");
+      setLocation("/dashboard");
+    }
+  }, [isLoading, meData, setLocation]);
+
+  if (isLoading) return <Spinner />;
+
+  if (meData?.user && !meData?.needsOnboarding) return null;
+
   return <>{children}</>;
 }
 
@@ -67,32 +103,44 @@ function AppRoutes() {
       </Route>
       <Route path="/onboard">
         <RequireAuth>
-          <Onboard />
+          <OnboardRoute>
+            <Onboard />
+          </OnboardRoute>
         </RequireAuth>
       </Route>
       <Route path="/dashboard">
         <RequireAuth>
-          <Dashboard />
+          <OnboardingGuard>
+            <Dashboard />
+          </OnboardingGuard>
         </RequireAuth>
       </Route>
       <Route path="/dashboard/profile">
         <RequireAuth>
-          <DashboardProfile />
+          <OnboardingGuard>
+            <DashboardProfile />
+          </OnboardingGuard>
         </RequireAuth>
       </Route>
       <Route path="/dashboard/projects">
         <RequireAuth>
-          <DashboardProjects />
+          <OnboardingGuard>
+            <DashboardProjects />
+          </OnboardingGuard>
         </RequireAuth>
       </Route>
       <Route path="/dashboard/skills">
         <RequireAuth>
-          <DashboardSkills />
+          <OnboardingGuard>
+            <DashboardSkills />
+          </OnboardingGuard>
         </RequireAuth>
       </Route>
       <Route path="/dashboard/preview">
         <RequireAuth>
-          <DashboardPreview />
+          <OnboardingGuard>
+            <DashboardPreview />
+          </OnboardingGuard>
         </RequireAuth>
       </Route>
       <Route path="/:username" component={PublicPortfolio} />
