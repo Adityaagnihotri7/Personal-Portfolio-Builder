@@ -1,0 +1,317 @@
+Upgrade a FULL-STACK SaaS web application called **CodeFolio** — a no-code/low-code portfolio builder for developers. 
+
+The platform should be production-ready, scalable, and designed like a premium SaaS product (similar to Wix/Squarespace but for developers).
+
+---
+
+# 🧠 CORE FEATURES
+
+## 1. AUTHENTICATION
+
+* JWT-based authentication
+* Signup/Login/Logout
+* Secure password hashing (bcrypt)
+* Protected dashboard routes
+
+---
+
+## 2. USER DASHBOARD (CMS)
+
+Create a clean, modern dashboard where users can manage their portfolio.
+
+### Sections:
+
+### 👤 Profile
+
+* Name
+* Bio
+* Email (hidden publicly)
+* Social links (GitHub, LinkedIn, Twitter)
+* Resume upload (PDF)
+* Profile Photo Upload:
+
+  * Upload from local device
+  * Preview before saving
+  * Crop + auto-fit into circular frame
+  * Store using Cloudinary or similar
+  * Ensure responsive circular display
+
+---
+
+### 💼 Projects
+
+* Title
+* Description
+* Tech Stack (array of tags)
+* GitHub Link
+* Live Demo Link
+* Project Image Upload
+* Mark as “Featured”
+
+---
+
+### 🧠 Skills
+
+* Categorized:
+
+  * Frontend
+  * Backend
+  * DevOps
+  * Tools
+
+---
+
+### 🏆 Achievements
+
+* Title
+* Description
+* Date
+* Optional link
+
+---
+
+### 📜 Certificates
+
+* Title
+* Issuer
+* Date
+* Certificate link or upload
+
+---
+
+### 💼 Experience
+
+* Role
+* Company
+* Duration
+* Description
+
+---
+
+## 3. TEMPLATE ENGINE
+
+* Support multiple templates:
+
+  * Minimal
+  * Cyberpunk
+  * Corporate
+
+* Dynamic rendering:
+
+```js
+const templateMap = {
+  minimal: MinimalLayout,
+  cyberpunk: CyberpunkLayout,
+  corporate: CorporateLayout,
+};
+
+const Layout = templateMap[user.templateId] || DefaultLayout;
+return <Layout data={userData} />;
+```
+
+* Allow:
+
+  * Theme color selection
+  * Dark/Light mode
+  * Font customization
+
+---
+
+## 4. LIVE PREVIEW (IMPORTANT)
+
+* Split screen:
+
+  * Left → Form
+  * Right → Live portfolio preview
+* Updates instantly as user types
+
+---
+
+## 5. PUBLIC PORTFOLIO
+
+* Route: `/username`
+
+* Fully responsive
+
+* SEO optimized:
+
+  * Dynamic title
+  * Meta description
+  * Open Graph tags
+
+* Sections:
+
+  * Hero
+  * About
+  * Skills
+  * Projects
+  * Experience
+  * Achievements
+  * Certificates
+  * Contact Form
+
+---
+
+## 6. CONTACT FORM (REAL-TIME EMAIL)
+
+* Visitors can send messages
+* Messages go directly to portfolio owner's email
+
+### Implementation:
+
+* Use SendGrid or Resend (preferred over Nodemailer)
+* Backend API:
+
+  * POST /api/contact
+* Payload:
+
+  * name
+  * email
+  * message
+  * ownerEmail
+
+### Security:
+
+* Do NOT expose user email publicly
+* Add rate limiting
+* Optional: reCAPTCHA
+
+---
+
+## 7. RESUME DOWNLOAD (REAL-TIME)
+
+* Users upload resume (PDF)
+* Public portfolio shows “Download Resume” button
+* On click:
+
+  * File downloads instantly to user's local device
+* Use proper headers:
+
+  * Content-Disposition: attachment
+
+---
+
+## 8. IMAGE HANDLING
+
+* Use Cloudinary / S3
+* Optimize images
+* Lazy loading
+* Ensure:
+
+  * Profile photo fits perfectly in circular UI
+  * No distortion
+
+---
+
+## 9. VANITY URL SYSTEM
+
+* Each user gets:
+
+  * `/username`
+* Backend:
+
+  * Fetch user data dynamically
+
+---
+
+## 10. ANALYTICS (BASIC)
+
+* Track:
+
+  * Profile views
+  * Project clicks
+* Show in dashboard
+
+---
+
+## 11. PERFORMANCE
+
+* Lazy loading
+* Code splitting
+* Lighthouse score > 90
+
+---
+
+## 12. UI/UX (PREMIUM FEEL)
+
+* Use Tailwind CSS
+* Glassmorphism / gradient UI
+* Smooth animations (Framer Motion)
+* Toast notifications
+* Loading states
+* Mobile-first design
+
+---
+
+## 13. TECH STACK
+
+Frontend:
+
+* React.js
+* Tailwind CSS
+* React Hook Form
+* Axios
+
+Backend:
+
+* Node.js
+* Express.js
+
+Database:
+
+* MongoDB (Mongoose)
+
+Storage:
+
+* Cloudinary / AWS S3
+
+Email:
+
+* SendGrid or Resend
+
+---
+
+## 14. FOLDER STRUCTURE
+
+* /client (React frontend)
+* /server (Node backend)
+* Separate:
+
+  * routes
+  * controllers
+  * models
+  * middleware
+
+---
+
+## 15. BONUS (IF POSSIBLE)
+
+* Custom domains (simulate)
+* Pro plan badge
+* Template marketplace (future-ready)
+
+---
+
+# 🎯 FINAL GOAL
+
+The application should:
+
+* Feel like a real SaaS product
+* Be deployable
+* Handle real users
+* Be impressive enough for FAANG-level recruiters and startups
+
+---
+
+Generate:
+
+1. Full project structure
+2. Backend APIs
+3. Frontend components
+4. Database schema
+5. Deployment steps
+6. Email integration
+7. Resume download logic
+8. Image upload + crop logic
+
+Ensure everything works in real-time and is production-ready.

@@ -39,8 +39,6 @@ app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-app.use(clerkMiddleware());
-
 app.use("/api", router);
 
 export default app;

@@ -1,4 +1,5 @@
 import { Router, type IRouter } from "express";
+import { clerkMiddleware } from "@clerk/express";
 import healthRouter from "./health";
 import meRouter from "./me";
 import usersRouter from "./users";
@@ -9,12 +10,16 @@ import templatesRouter from "./templates";
 
 const router: IRouter = Router();
 
+// Public routes — no auth needed
 router.use(healthRouter);
-router.use(meRouter);
 router.use(usersRouter);
-router.use(projectsRouter);
-router.use(skillsRouter);
 router.use(contactRouter);
 router.use(templatesRouter);
+
+// Protected routes — require Clerk auth context
+router.use(clerkMiddleware());
+router.use(meRouter);
+router.use(projectsRouter);
+router.use(skillsRouter);
 
 export default router;
