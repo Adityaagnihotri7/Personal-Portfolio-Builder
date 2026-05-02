@@ -208,8 +208,8 @@ export default function DashboardProfile() {
               <CardContent className="space-y-4">
                 {[
                   { name: "github" as const, label: "GitHub", icon: SiGithub, placeholder: "https://github.com/username" },
-                  { name: "linkedin" as const, label: "LinkedIn", icon: SiLinkedin, placeholder: "https://linkedin.com/in/username" },
-                  { name: "twitter" as const, label: "X / Twitter", icon: SiX, placeholder: "https://twitter.com/username" },
+                  { name: "linkedin" as const, label: "LinkedIn", icon: Linkedin, placeholder: "https://linkedin.com/in/username" },
+                  { name: "twitter" as const, label: "X / Twitter", icon: Twitter, placeholder: "https://twitter.com/username" },
                   { name: "website" as const, label: "Website", icon: Globe, placeholder: "https://yoursite.com" },
                   { name: "contactEmail" as const, label: "Contact Email", icon: Mail, placeholder: "hello@example.com" },
                 ].map(({ name, label, icon: Icon, placeholder }) => (
